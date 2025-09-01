@@ -6,6 +6,7 @@ from autogen_ext.models.openai import OpenAIChatCompletionClient
 from autogen_core.models import ModelInfo
 from autogen_agentchat.messages import TextMessage
 from autogen_core import CancellationToken
+from autogen_agentchat.ui import Console
 
 
 load_dotenv()
@@ -46,14 +47,14 @@ async def main():
     )
 
 
-    result = await agent.run(task="Find information about Labrador Retriever")
-    # print("Result:", result)
-    print(result.messages[-1].content)
+    # result = await agent.run(task="Find information about Labrador Retriever")
+    # # print("Result:", result)
+    # print(result.messages[-1].content)
 
      
 
     # call on_messages via a helper (shows how to pass CancellationToken)
-    
+
     async def assistant_run()-> None:
         response = await agent.on_messages(
             messages= [TextMessage(content='Find information about Labrador Retriever via the tool',source='User')],
@@ -64,7 +65,21 @@ async def main():
         print('\n\n\n\n')
         print(response.chat_message)
 
-    await assistant_run()
+    # await assistant_run()
+
+
+
+    async def assistant_run_stream() -> None:
+
+        await Console(
+            agent.on_messages_stream(
+            messages= [TextMessage(content='Find information about Labrador Retriever via the tool',source='User')],
+            cancellation_token=CancellationToken()
+        ),
+        output_stats=True # Enable stats Printing
+        )
+
+    await assistant_run_stream()
 
   
     await model_client.close()
