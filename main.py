@@ -4,10 +4,15 @@ from dotenv import load_dotenv
 from autogen_agentchat.agents import AssistantAgent
 from autogen_ext.models.openai import OpenAIChatCompletionClient
 from autogen_core.models import ModelInfo
+from autogen_agentchat.messages import TextMessage
 
 
 load_dotenv()
 api_key = os.getenv("GEMINI_API_KEY")  
+
+async def web_search(query: str) -> str:
+    """Find information on the web"""
+    return "The Labrador Retriever or simply Labrador is a British breed of retriever gun dog. "
 
 async def main():
    
@@ -25,14 +30,22 @@ async def main():
     )
 
 
-    assistant = AssistantAgent(
-        name="assistant",
+    # assistant = AssistantAgent(
+    #     name="assistant",
+    #     model_client=model_client,
+    #     description="A Gemini-powered Agent"
+    # )
+
+    agent = AssistantAgent(
+        name = 'assistant',
         model_client=model_client,
-        description="A Gemini-powered Agent"
+        tools = [web_search],
+        system_message='Use Tools to solve tasks',
+        description = "An agent that uses tool to help solve tasks"
     )
 
-   
-    result = await assistant.run(task="What's the capital of India & write some more about it?")
+
+    result = await agent.run(task="Find information about Labrador Retriever")
     # print("Result:", result)
     print(result.messages[-1].content)
 
