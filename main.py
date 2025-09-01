@@ -55,15 +55,15 @@ async def main():
 
     # call on_messages via a helper (shows how to pass CancellationToken)
 
-    async def assistant_run()-> None:
-        response = await agent.on_messages(
-            messages= [TextMessage(content='Find information about Labrador Retriever via the tool',source='User')],
-            cancellation_token=CancellationToken()
-        )
+    # async def assistant_run()-> None:
+    #     response = await agent.on_messages(
+    #         messages= [TextMessage(content='Find information about Labrador Retriever via the tool',source='User')],
+    #         cancellation_token=CancellationToken()
+    #     )
 
-        print(response.inner_messages)
-        print('\n\n\n\n')
-        print(response.chat_message)
+    #     print(response.inner_messages)
+    #     print('\n\n\n\n')
+    #     print(response.chat_message)
 
     # await assistant_run()
 
@@ -81,7 +81,17 @@ async def main():
 
     await assistant_run_stream()
 
-  
+    async def assistant_run_stream_2() -> None:
+        await Console(
+            agent.on_messages_stream(
+            messages= [TextMessage(content='What was the last question I asked ?',source='User')],
+            cancellation_token=CancellationToken()
+        ),
+        output_stats=True # Enable stats Printing
+        )
+
+    await assistant_run_stream_2()
+
     await model_client.close()
 
 
